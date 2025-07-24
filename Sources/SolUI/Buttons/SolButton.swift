@@ -115,7 +115,6 @@ public struct SolButton: View {
             maxWidth: hugsContent ? nil : .infinity
         )
         .frame(minHeight: 36)
-        .border(Color.red)
         .overlay { progressView }
     }
     
