@@ -170,6 +170,7 @@ public struct SolButton: View {
     }
 }
 
+@available(iOS 17.0, *)
 #Preview {
     @Previewable @State var hugsContent = false
     @Previewable @State var hasIcon = false
