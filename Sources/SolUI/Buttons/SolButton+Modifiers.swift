@@ -10,6 +10,7 @@ import SwiftUI
 extension EnvironmentValues {
     @Entry var solButtonStyle: ButtonStyle = .primary
     @Entry var solButtonButtonShape: ButtonBorderShape = .capsule
+    @Entry var solButtonSize: ButtonSize = .standard
     @Entry var solButtonHugsContent: Bool = false
     @Entry var solButtonIconLeading: Bool = false
     @Entry var solHaptics: UIImpactFeedbackGenerator.FeedbackStyle? = .light
@@ -30,6 +31,14 @@ extension View {
     /// - Returns: A view that applies the given border shape.
     public func solButtonBorderShape(_ shape: ButtonBorderShape) -> some View {
         self.environment(\.solButtonButtonShape, shape)
+    }
+    
+    /// Sets the size of SolButtons in this view hierarchy.
+    ///
+    /// - Parameter size: The `ButtonSize` to use. Defaults to `.standard` if unset.
+    /// - Returns: A view that applies the given size to SolButtons within.
+    public func solButtonSize(_ size: ButtonSize) -> some View {
+        self.environment(\.solButtonSize, size)
     }
     
     /// Configures whether SolButtons in this view hierarchy should tightly hug their content.
@@ -56,3 +65,4 @@ extension View {
         self.environment(\.solHaptics, style)
     }
 }
+

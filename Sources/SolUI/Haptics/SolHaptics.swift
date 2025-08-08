@@ -1,5 +1,5 @@
 //
-//  Haptics.swift
+//  SolHaptics.swift
 //  SolUI
 //
 //  Created by Andy Gandara on 7/23/25.
@@ -9,7 +9,7 @@ import UIKit
 
 /// A utility type that provides a simple interface for triggering haptic feedback on supported Apple devices.
 /// This enum offers methods for generating impact and notification feedback, abstracting UIKit's feedback generators.
-public enum Haptics {
+public enum SolHaptics {
     /// Triggers an impact feedback of the specified style using `UIImpactFeedbackGenerator`.
     ///
     /// Use this method to simulate physical impacts or collisions with varying intensity.

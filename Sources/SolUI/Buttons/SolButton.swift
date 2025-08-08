@@ -35,6 +35,7 @@ import SwiftUI
 public struct SolButton: View {
     @Environment(\.solButtonStyle) private var buttonStyle: ButtonStyle
     @Environment(\.solButtonButtonShape) private var buttonShape: ButtonBorderShape
+    @Environment(\.solButtonSize) private var buttonSize: ButtonSize
     @Environment(\.solButtonHugsContent) private var hugsContent: Bool
     @Environment(\.solButtonIconLeading) private var iconLeading: Bool
     @Environment(\.solHaptics) private var hapticsStyle: UIImpactFeedbackGenerator.FeedbackStyle?
@@ -52,6 +53,18 @@ public struct SolButton: View {
     ///   - action: The synchronous action to perform on tap.
     public init(_ titleKey: LocalizedStringKey, systemImage: String? = nil, action: @escaping () -> Void) {
         self.titleKey = titleKey
+        self.systemImage = systemImage
+        self.action = action
+        self.asyncAction = nil
+    }
+    
+    /// Creates a SolButton with a title, optional system image, and synchronous action.
+    /// - Parameters:
+    ///   - title: The button's title.
+    ///   - systemImage: The optional SF Symbol image name to display.
+    ///   - action: The synchronous action to perform on tap.
+    public init(_ title: String, systemImage: String? = nil, action: @escaping () -> Void) {
+        self.titleKey = "\(title)"
         self.systemImage = systemImage
         self.action = action
         self.asyncAction = nil
@@ -105,16 +118,18 @@ public struct SolButton: View {
     
     @ViewBuilder
     private var buttonContent: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: buttonSize.horizontalPadding) {
             labelContent
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 6)
+        .padding(.horizontal, buttonSize.horizontalPadding)
         .frame(
             minWidth: 0,
             maxWidth: hugsContent ? nil : .infinity
         )
-        .frame(minHeight: 36)
+        .frame(
+            minWidth: buttonSize.minHeight,
+            minHeight: buttonSize.minHeight
+        )
         .overlay { progressView }
     }
     
@@ -139,7 +154,7 @@ public struct SolButton: View {
                 }
             }
         }
-        .font(.body)
+        .font(buttonSize.font)
         .fontWeight(.medium)
         .hidden(isLoading)
     }
@@ -154,7 +169,7 @@ public struct SolButton: View {
     
     private func performAction() {
         if let hapticsStyle {
-            Haptics.impact(hapticsStyle)
+            SolHaptics.impact(hapticsStyle)
         }
         
         if let action {
@@ -200,6 +215,14 @@ public struct SolButton: View {
                 try? await Task.sleep(for: .seconds(3))
             })
             .solButtonStyle(.secondary)
+            
+            SolButton("Compact", systemImage: hasIcon ? "person" : nil, action: {})
+                .solButtonSize(.compact)
+            
+            SolButton("Mini", systemImage: hasIcon ? "person" : nil, action: {})
+                .solButtonSize(.mini)
+            
+            SolButton(systemImage: "person", action: {})
         }
         .solButtonHugsContent(hugsContent)
         .solButtonIconLeading(iconLeading)
