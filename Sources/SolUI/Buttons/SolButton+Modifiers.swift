@@ -13,6 +13,7 @@ extension EnvironmentValues {
     @Entry var solButtonSize: ButtonSize = .standard
     @Entry var solButtonHugsContent: Bool = false
     @Entry var solButtonIconLeading: Bool = false
+    @Entry var solButtonGlassEffect: Bool = false
     @Entry var solHaptics: UIImpactFeedbackGenerator.FeedbackStyle? = .light
 }
 
@@ -55,6 +56,14 @@ extension View {
     /// - Returns: A view that applies this layout preference.
     public func solButtonIconLeading(_ iconLeading: Bool = false) -> some View {
         self.environment(\.solButtonIconLeading, iconLeading)
+    }
+    
+    /// Sets whether SolButtons in this view hierarchy should apply a glass effect.
+    ///
+    /// - Parameter enabled: If true, applies a glass effect. Defaults to true.
+    /// - Returns: A view that applies this glass effect preference.
+    public func solButtonGlassEffect(_ enabled: Bool = true) -> some View {
+        self.environment(\.solButtonGlassEffect, enabled)
     }
     
     /// Sets the haptic feedback style for SolButtons within this view hierarchy.

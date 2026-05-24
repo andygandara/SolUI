@@ -38,6 +38,7 @@ public struct SolButton: View {
     @Environment(\.solButtonSize) private var buttonSize: ButtonSize
     @Environment(\.solButtonHugsContent) private var hugsContent: Bool
     @Environment(\.solButtonIconLeading) private var iconLeading: Bool
+    @Environment(\.solButtonGlassEffect) private var glassEffect: Bool
     @Environment(\.solHaptics) private var hapticsStyle: UIImpactFeedbackGenerator.FeedbackStyle?
     
     private let titleKey: LocalizedStringKey?
@@ -48,10 +49,10 @@ public struct SolButton: View {
     
     /// Creates a SolButton with a title, optional system image, and synchronous action.
     /// - Parameters:
-    ///   - titleKey: The button's localized title.
+    ///   - localizedKey: The button's localized string key for the title.
     ///   - systemImage: The optional SF Symbol image name to display.
     ///   - action: The synchronous action to perform on tap.
-    public init(_ titleKey: LocalizedStringKey, systemImage: String? = nil, action: @escaping () -> Void) {
+    public init(localizedKey titleKey: LocalizedStringKey, systemImage: String? = nil, action: @escaping () -> Void) {
         self.titleKey = titleKey
         self.systemImage = systemImage
         self.action = action
@@ -83,10 +84,10 @@ public struct SolButton: View {
     
     /// Creates a SolButton with a title, optional system image, and asynchronous action.
     /// - Parameters:
-    ///   - titleKey: The button's localized title.
+    ///   - localizedKey: The button's localized string key for the title.
     ///   - systemImage: The optional SF Symbol image name to display.
     ///   - action: The async action to perform on tap. While the async action is running, a loading indicator is shown and the button is disabled.
-    public init(_ titleKey: LocalizedStringKey, systemImage: String? = nil, action: @escaping () async -> Void) {
+    public init(localizedKey titleKey: LocalizedStringKey, systemImage: String? = nil, action: @escaping () async -> Void) {
         self.titleKey = titleKey
         self.systemImage = systemImage
         self.action = nil
@@ -105,15 +106,27 @@ public struct SolButton: View {
     }
     
     public var body: some View {
-        Button {
-            performAction()
-        } label: {
-            buttonContent
+        if #available(iOS 26.0, *), glassEffect {
+            Button {
+                performAction()
+            } label: {
+                buttonContent
+            }
+            .buttonBorderShape(buttonShape)
+            .foregroundColor(buttonStyle.foregroundColor)
+            .tint(buttonStyle.backgroundColor)
+            .buttonStyle(.glassProminent)
+        } else {
+            Button {
+                performAction()
+            } label: {
+                buttonContent
+            }
+            .buttonBorderShape(buttonShape)
+            .foregroundColor(buttonStyle.foregroundColor)
+            .tint(buttonStyle.backgroundColor)
+            .buttonStyle(.borderedProminent)
         }
-        .buttonBorderShape(buttonShape)
-        .foregroundColor(buttonStyle.foregroundColor)
-        .tint(buttonStyle.backgroundColor)
-        .buttonStyle(.borderedProminent)
     }
     
     @ViewBuilder
@@ -185,7 +198,7 @@ public struct SolButton: View {
     }
 }
 
-@available(iOS 17.0, *)
+@available(iOS 26.0, *)
 #Preview {
     @Previewable @State var hugsContent = false
     @Previewable @State var hasIcon = false
@@ -211,7 +224,7 @@ public struct SolButton: View {
             SolButton("Destructive", systemImage: hasIcon ? "trash" : nil, action: {})
                 .solButtonStyle(.destructive)
             
-            SolButton("Async Button", systemImage: hasIcon ? "person" : nil, action: {
+            SolButton(localizedKey: "Async Button", systemImage: hasIcon ? "person" : nil, action: {
                 try? await Task.sleep(for: .seconds(3))
             })
             .solButtonStyle(.secondary)
@@ -223,6 +236,18 @@ public struct SolButton: View {
                 .solButtonSize(.mini)
             
             SolButton(systemImage: "person", action: {})
+            
+            SolButton("Glass Primary", systemImage: hasIcon ? "person" : nil, action: {})
+                .solButtonStyle(.primary)
+                .solButtonGlassEffect()
+            
+            SolButton("Glass Secondary", systemImage: hasIcon ? "house" : nil, action: {})
+                .solButtonStyle(.secondary)
+                .solButtonGlassEffect()
+            
+            SolButton("Glass Destructive", systemImage: hasIcon ? "trash" : nil, action: {})
+                .solButtonStyle(.destructive)
+                .solButtonGlassEffect()
         }
         .solButtonHugsContent(hugsContent)
         .solButtonIconLeading(iconLeading)
